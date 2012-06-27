@@ -2,18 +2,52 @@
 /**
  * @authour karl holz
  * @package css_one
- * 
- * 
+ * @date June 27, 2012
+
+Copyright (c) 2012 Karl Holz <newaeon|(a)|mac|d|com>
+
+CSS_One has been created by Karl Holz, any borrowed functions have been 
+noted in the code comments with a link to the origonal page.
+
+
+Permission is hereby granted, free of charge, to any person obtaining
+a copy of this software and associated documentation files (the
+"Software"), to deal in the Software without restriction, including
+without limitation the rights to use, copy, modify, merge, publish,
+distribute, sublicense, and/or sell copies of the Software, and to
+permit persons to whom the Software is furnished to do so, subject to
+the following conditions:
+
+The above copyright notice and this permission notice shall be
+included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+  
  * 
  */
 
 class css_one {
+    // match css
     private $match='/[A-Za-z0-9%.,_-]+?\.css/';
+    // encoded image holder
     private $img=array();
+    // image encoded types
     private $type=array('jpg', 'gif', 'png');
+    // styles list
     public  $style=array();
+    // javascript list
     public  $js=array();
+    // atom feed list
     public  $atom=array();
+    // rss feed list
+    public  $rss=array();
     /**
      * __set img array
      * @param type $name
@@ -47,63 +81,85 @@ class css_one {
         $this->id=__CLASS__;
         $this->HTML5=TRUE;
         $this->css='';
-
-
-//        $this->style[]=$this->make_rest_link($this->get_css());
+        
+        $this->title="CSS One - jQuery UI demo tester";
+        $this->description="This class will look for images in the css directory and replace them in the CSS file";
+        $this->keywords="HTML5, css, base64 images, phpclasses";
+        // default for stopping robots
+        $this->robots='noindex,nofollow';
+        
     }
-    
+
+    /**
+     * set jQuery js script or http link
+     * @param type $j 
+     */
     function set_jquery($j='') {
-        if ($j != '' && is_file(__DIR__.'/'.$j)) { 
+        if ($j != '') { 
             $this->js[]=$j; 
         } else { 
             $this->js[]='https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js'; 
         }        
     }
     
+    /**
+     * set jQuery-ui js script or http link
+     * @param type $j 
+     */
     function set_jquery_ui($ui='') {
-        if ($ui != '' && is_file(__DIR__.'/'.$ui)) { 
+        if ($ui != '') { 
             $this->js[]=$ui; 
         } else { 
             $this->js[]='https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.18/jquery-ui.min.js'; 
         }   
     }
-    /**
-     * make http rest link
-     * @param type $css
-     * @return type 
-     */
-    function make_rest_link($css) {
-        return 'http://'.$_SERVER['HTTP_HOST'].$_SERVER['SCRIPT_NAME'].'?'.$this->rest_fix($css);
-    }
-    
-    /**
-     * strip off root dir to form rest link to style sheet
-     * @param type $css
-     * @return type 
-     */
-    function rest_fix($css) {
-        return str_replace(array($this->dir), array(''), $css);
-    }
-    
-    function add_atom($l){
-        $this->atom[]=$l;
-    }
-    
 
-    /**
-     * checks CSS file is a file
-     * @return boolean 
-     */
-    function rest_check() {
-        $css=$this->get_css();
-        if (is_file($css)) return $css;
-        header("HTTP/1.1 404 Not Found");
-        ?><h2>HTTP/1.1 404 Not Found</h2>
-        <?php echo $this->rest; ?><br/>File is not avaliable on this system<?php
+  /**
+   * add style sheet
+   * @param type $css 
+   */
+  function add_style($css) {
+      $this->style[]=$css;
+  }
+  
+  /**
+   * add javascript
+   * @param type $js 
+   */
+  function add_js($js) {
+      $this->js[]=$js;
+  }
+  
+  /**
+   * add ATOM link
+   * @param type $t
+   * @param type $l 
+   */
+  function add_atom($t, $l){
+        $this->atom[$t]=$l;
+  }
+  
+  /**
+   * add RSS link
+   * @param type $t
+   * @param type $l 
+   */
+  function add_rss($t,$l){
+        $this->rss[$t]=$l;
     }
+
+  /**
+   * load html widget template
+   * @param type $h 
+   */
+  function load_body($h) {
+      if (is_file($h)) $this->body=file_get_contents($h);
+      
+  }
     
     /**
      * generate a glob string for all img types
+     * @param string $d css file
      */ 
     function get_img_glob($d) {
         $c='{';        
@@ -116,22 +172,18 @@ class css_one {
     }
     
     /**
-     * get CSS file
-     * @return string
-     */
-    function get_css() {
-        return $this->dir.$this->rest;
-    }
-    /**
      * get the CSS directory for image searching
      * @return string 
      */
     function get_css_dir($d) {
-        
         return $this->dir.preg_replace($this->match, '', trim($d, '.'));
     }
     /**
      * encode image list for faster stlye loading
+     * 
+     * borrowed from jeff [dot] jbrowns [at] com 28-Feb-2012 06:36
+     * http://www.php.net/manual/en/function.base64-encode.php#107705
+     * 
      * @param type $imagefile
      * @return type 
      */
@@ -159,22 +211,22 @@ class css_one {
         return $imgs;
     }
 
-
     /**
      * Print CSS output with images encoded into the style 
      */
     function printCSS() {
         header("Content-type: text/css");
         $this->makeOneCSS();
-//        if ($this->css=='') {
-//            print_r($this);
-//        } else {
-            echo $this->css;
-//        }
+        echo $this->css;
         exit();
     }
     
+    /**
+     * make One CSS, combines all css files and embed images
+     * @return type 
+     */
     function makeOneCSS () {
+        if (count($this->style) < 1 ) return ;
         foreach ($this->style as $s) {
          $c=@file_get_contents($s);  
          $this->encode_img($s);
@@ -185,49 +237,6 @@ class css_one {
         }
 
         return ;
-    }
-    
-    
-    /**
-     * prints an ATOM feed of CSS files that have been found in the curent folder 
-     */
-    function CSSfeed() {
-     $this->id=md5($this->dir);
-     $date=gmdate(DATE_ATOM,filectime($this->dir));
-     header('Content-type: application/atom+xml');
-     echo <<<H
-<?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom">
-  <id>$this->id</id>
-  <title type="text">Found CSS files</title>
-  <updated>$date</updated>
-  <subtitle type="text">These css files will have all found images from current directory and one bellow </subtitle>
-  
-H
-     ;
-     $styles=  glob('./css/*/*.custom.css');
-     foreach ($styles as $c) {
-      $link=$this->make_rest_link($c);
-      $tag=$this->rest_fix($c);
-      $size=  filesize($this->dir.'/'.$tag);
-      $d=$date=gmdate(DATE_ATOM,filectime($this->dir.'/'.$tag));
-      echo <<<H
-  <entry>
-    <title>$tag</title>
-    <id>$tag</id>
-    <updated>$d</updated>
-    <link rel="enclosure" type="text/css" length="$size" href="$link"/>
-    <summary>$tag</summary>
-  </entry>
-  
-H
-      ;
-     }
-     echo <<<H
-</feed>
-H
-     ;
-     exit();
     }
     
   /**
@@ -248,36 +257,12 @@ H
     return $buffer;
   }
 
-  /**
-   * add style sheet
-   * @param type $css 
-   */
-  function add_style($css) {
-      $this->style[]=$css;
-  }
-  
-  /**
-   * add javascript
-   * @param type $js 
-   */
-  function add_js($js) {
-      $this->js[]='http://'.$_SERVER['HTTP_HOST'].$js;
-  }
-  
-  /**
-   * load html widget template
-   * @param type $h 
-   */
-  function load_body($h) {
-      if (is_file($h)) $this->body=file_get_contents($h);
-      
-  }
  /**
   * xHTML/HTML5 __toString output
   * set to false for xHTML/css/jquery 
   */
  function __toString() {
-  $css=$this->makeOneCSS();  
+//  $css=$this->makeOneCSS();  
   if (stristr($_SERVER['HTTP_ACCEPT'], "application/xhtml+xml") && $this->HTML5 !== TRUE) {
    $this->mime="application/xhtml+xml";
    header("Content-Type: ".  $this->mime);
@@ -296,13 +281,18 @@ H
   $js.='<link type="text/css" href="'.$j.'" rel="stylesheet" />'."\n";   }   
   }
   if (count($this->js) > 0) {
-   foreach ($this->js as $j) { //append css style
+   foreach ($this->js as $j) { //append JavaScript
     $js.='<script type="text/javascript" src="'.$j.'"></script>'."\n";
    }   
   }
-    if (count($this->atom) > 0) {
-   foreach ($this->atom as $k => $j) { //append css style
+  if (count($this->atom) > 0) {
+   foreach ($this->atom as $k => $j) { //append atom feeds
     $js.='<link type="application/atom+xml" href="'.$j.'" rel="alternate" title="'.$k.'" />'."\n";
+   }   
+  }
+  if (count($this->rss) > 0) {
+   foreach ($this->rss as $k => $j) { //append rss feeds
+    $js.='<link type="application/rss+xml" href="'.$j.'" rel="alternate" title="'.$k.'" />'."\n";
    }   
   }
 
@@ -320,18 +310,15 @@ H
   <title>$this->title</title>
   <meta http-equiv="Content-Type" content="$this->mime; charset=utf-8" />
   <meta http-equiv="Content-Language" content="en-us" />
-  <style type="text/css">
-   $css
-  </style>
+  <!-- META -->
+  <meta name=”description” content=”$this->description”>
+  <meta name=”keywords” content=”$this->keywords”>
+  <meta name=”robots” content=”$this->robots”>
   <!-- Load Javascript and CSS files to this basic HTML skel layout. -->
   <!-- let you're JavaScript and CSS build and manage the UI -->
   $js
- 
  </head>
  <body>
-  <div id='$this->id' >
-   $div
-  </div>
   $this->body
  </body>
 </html>
