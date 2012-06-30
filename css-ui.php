@@ -77,7 +77,7 @@ class css_one {
      * @return boolean 
      */
     function __construct() {
-        $this->dir=__DIR__;
+        $this->dir=dirname(__FILE__);
         $this->id=__CLASS__;
         $this->HTML5=TRUE;
         $this->css='';
@@ -298,9 +298,9 @@ class css_one {
 
   $div='';
   if ($this->feed) {
-    $styles=  glob('{'.__DIR__.'/*/*.css, '.__DIR__.'/*.css }', GLOB_BRACE );
+    $styles=  glob('{'.$this->dir.'/*/*.css, '.$this->dir.'/*.css }', GLOB_BRACE );
     foreach ($styles as $c) {
-     $link=str_replace(array(__DIR__), array(''), $c);
+     $link=str_replace(array($this->dir), array(''), $c);
      $div.='<a href="http://'.$_SERVER['HTTP_HOST'].$_SERVER['SCRIPT_NAME'].'?'.$link.'" >'.$link.'</a><br />';
     }
   }

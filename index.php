@@ -8,7 +8,7 @@ CSS One Tester page
  * help you solve your 
  */          
 //      file selecter
-$webdir=  str_replace(array($_SERVER['DOCUMENT_ROOT']), array(''), __DIR__);
+$webdir=  str_replace(array($_SERVER['DOCUMENT_ROOT']), array(''), dirname(__FILE__));
 if (array_key_exists('style', $_GET)) { 
    $style=$_GET['style']; 
 } else { $style= ''; }
@@ -44,8 +44,8 @@ switch ($rest) {
      * ATOM Feed of different jquery ui CSS styles view
      */
     case '/feed.atom':
-     $id=md5(__DIR__);
-     $date=gmdate(DATE_ATOM,filectime(__DIR__));
+     $id=md5(dirname(__FILE__));
+     $date=gmdate(DATE_ATOM,filectime(dirname(__FILE__)));
      header('Content-type: application/atom+xml');
      echo <<<H
 <?xml version="1.0" encoding="utf-8"?>
@@ -112,7 +112,7 @@ H
         }
         $css->add_style($style);
         // load HTML5/xHTML markup
-        $css->load_body(__DIR__.'/jquery-ui/demo.html'); 
+        $css->load_body(dirname(__FILE__).'/jquery-ui/demo.html'); 
         echo $css;
 
     break;
