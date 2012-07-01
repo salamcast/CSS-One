@@ -22,23 +22,34 @@ if  (array_key_exists('ORIG_PATH_INFO', $_SERVER)) {
 require_once 'css-ui.php';
 switch ($rest) {
     /**
-     * Style CSS
-     * this will return CSS output with images encoded into the style, minifyed
-     * and combined with other style sheet 
+     * XSLT Style Sheet for atom theme switcher
      */
-    case '/style.css':
-        $css=new css_one();
-        // if no style pass with query string,
-        // use first custom jquery ui css file
-        if ($style == '') {
-            $d=glob('./css/*/*.custom.css');
-            $style=$d[0];
-        }
-        $css->add_style($style);
-        // add custom css
-        $css->add_style('./css/ui-demo.css');
-        $css->printCSS();
-        exit();
+    case '/feed.xsl':
+      header('Content-type: text/xml');
+      echo <<<J
+<?xml version="1.0" encoding="UTF-8"?>
+<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+  xmlns="http://www.w3.org/1999/xhtml"
+  version="1.0">
+  <xsl:output method="html"/>
+  <xsl:template match="/">
+    <form>
+    <xsl:apply-templates select="feed" />
+    </form>
+  </xsl:template>
+  <xsl:template match="feed">
+   <select id="css_switch" onchange="document.location.href=this.value">
+     <option >Try a new style</option>
+     <xsl:apply-templates select="entry" />
+   </select>
+  </xsl:template>
+  <xsl:template match="entry">
+    <option value="{link[@type='text/css']/@href}"><xsl:value-of select="title"/></option>
+  </xsl:template>
+  
+</xsl:stylesheet>
+J
+      ;      
     break;
     /**
      * ATOM Feed of different jquery ui CSS styles view
@@ -46,6 +57,7 @@ switch ($rest) {
     case '/feed.atom':
      $id=md5(dirname(__FILE__));
      $date=gmdate(DATE_ATOM,filectime(dirname(__FILE__)));
+     $uri='http://'.$_SERVER['HTTP_HOST'].'/'.$_SERVER['SCRIPT_NAME'];
      header('Content-type: application/atom+xml');
      echo <<<H
 <?xml version="1.0" encoding="utf-8"?>
@@ -102,17 +114,19 @@ H
         // add jquery-ui, will default to web link if file is not avaliable
         $css->set_jquery_ui($webdir.'/js/jquery-ui-1.8.21.custom.min.js');
         // add custom javascript
-        $css->add_js($webdir.'/js/ui-demo.js');
+        $css->add_js($webdir.'/js/jquery.xslt.js');
+        $css->add_js($webdir.'/jQuery-UI.demo.php/script.js');
+//        $css->add_js($webdir.'/js/ui-demo.js');
         // set dynamic css changer for jquery-ui
         // this script will have it's images embedded and css minifyed
         if ($style == '') {
-            $style=$_SERVER['SCRIPT_NAME'].'/style.css';
+            $style=$webdir.'/jQuery-UI.demo.php/style.css';
         } else {
-            $style=$_SERVER['SCRIPT_NAME'].'/style.css?style='.$style;
+            $style=$webdir.'/jQuery-UI.demo.php/style.css?style='.$style;
         }
         $css->add_style($style);
-        // load HTML5/xHTML markup
-        $css->load_body(dirname(__FILE__).'/jquery-ui/demo.html'); 
+        // load HTML5/xHTML markup file or url
+        $css->load_body('http://'.$_SERVER['HTTP_HOST'].$webdir.'/jQuery-UI.demo.php'); 
         echo $css;
 
     break;

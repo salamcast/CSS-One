@@ -153,7 +153,11 @@ class css_one {
    * @param type $h 
    */
   function load_body($h) {
-      if (is_file($h)) $this->body=file_get_contents($h);
+      if (is_file($h)) {
+        $this->body=file_get_contents($h, true);
+      } else {
+        $this->body=file_get_contents($h);
+      }
       
   }
     
@@ -278,7 +282,7 @@ class css_one {
 
   if (count($this->style) > 0) {
    foreach ($this->style as $j) { //append css style
-  $js.='<link type="text/css" href="'.$j.'" rel="stylesheet" />'."\n";   }   
+  $js.='<link class="css" type="text/css" href="'.$j.'" rel="stylesheet" />'."\n";   }   
   }
   if (count($this->js) > 0) {
    foreach ($this->js as $j) { //append JavaScript
@@ -287,22 +291,13 @@ class css_one {
   }
   if (count($this->atom) > 0) {
    foreach ($this->atom as $k => $j) { //append atom feeds
-    $js.='<link type="application/atom+xml" href="'.$j.'" rel="alternate" title="'.$k.'" />'."\n";
+    $js.='<link class="atom" type="application/atom+xml" href="'.$j.'" rel="alternate" title="'.$k.'" />'."\n";
    }   
   }
   if (count($this->rss) > 0) {
    foreach ($this->rss as $k => $j) { //append rss feeds
-    $js.='<link type="application/rss+xml" href="'.$j.'" rel="alternate" title="'.$k.'" />'."\n";
+    $js.='<link class="rss" type="application/rss+xml" href="'.$j.'" rel="alternate" title="'.$k.'" />'."\n";
    }   
-  }
-
-  $div='';
-  if ($this->feed) {
-    $styles=  glob('{'.$this->dir.'/*/*.css, '.$this->dir.'/*.css }', GLOB_BRACE );
-    foreach ($styles as $c) {
-     $link=str_replace(array($this->dir), array(''), $c);
-     $div.='<a href="http://'.$_SERVER['HTTP_HOST'].$_SERVER['SCRIPT_NAME'].'?'.$link.'" >'.$link.'</a><br />';
-    }
   }
   return <<<H
 <html $ns >
