@@ -70,7 +70,6 @@ class css_one {
         }
     }
     
-    
     /**
      * __construct boot strap the class
      * @param type $feed
