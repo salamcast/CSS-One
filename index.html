@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print" />
+
+    <title>Css-one by salamcast</title>
+  </head>
+
+  <body>
+
+    <header>
+      <div class="container">
+        <h1>Css-one</h1>
+        <h2>Bigger style sheet, less HTTP requests, faster loading </h2>
+
+        <section id="downloads">
+          <a href="https://github.com/salamcast/CSS-One/zipball/master" class="btn">Download as .zip</a>
+          <a href="https://github.com/salamcast/CSS-One/tarball/master" class="btn">Download as .tar.gz</a>
+          <a href="https://github.com/salamcast/CSS-One" class="btn btn-github"><span class="icon"></span>View on GitHub</a>
+        </section>
+      </div>
+    </header>
+
+    <div class="container">
+      <section id="main_content">
+        <h2>CSS One, unify your your style sheet and it's images into one file</h2>
+
+<p>June 27, 2012</p>
+
+<p>CSS One has been tested with <a href="http://jqueryui.com/download">jQuery UI</a> release themes and custom themes; to create custom themes, use <a href="http://jqueryui.com/themeroller/">theme roller</a>; but other Javascript framework CSS files should work too if the images are in the same directory as the style.  Look at the index.php to get an idea of how to use this code for your widget or web app.  The demo in index.php has an example of how to impliment multiple jQuery ui themes to your web applications; I simplely reused the atom feed and a little XSLT to made a select box that would load the new style.</p>
+
+<h3>CSS One will do</h3>
+
+<ul>
+<li>print minifyed CSS </li>
+<li>embed images into the document output</li>
+<li>print HTML5 or xHTML output </li>
+<li>add custom feeds</li>
+<li>add custom Javascript files/links </li>
+<li>load custom HTML widget markup.<br>
+</li>
+</ul><h3>CSS output example</h3>
+
+<p>for the best performance, please keep your styles organized in different folders with their images.
+view the jQuery UI css folder (found in the unzipped release folder) for the best example to get the best results.</p>
+
+<pre><code>$css=new css_one();
+$css-&gt;add_style('./book/style1.css');
+$css-&gt;add_style('./css/style2.css');
+$css-&gt;printCSS();
+exit();
+</code></pre>
+
+<h3>HTML5 / xHTML output example</h3>
+
+<pre><code>$css=new css_one();
+$css-&gt;title="CSS One ";
+$css-&gt;description="This is a jQuery UI CSS theme testing tool";        
+$css-&gt;keywords="HTML5, css, base64 images, phpclasses";
+$css-&gt;add_atom('Test jQuery UI',$_SERVER['SCRIPT_NAME'].'/feed.atom'); 
+$css-&gt;set_jquery('/js/jquery-1.7.2.min.js');
+$css-&gt;set_jquery_ui('/js/jquery-ui-1.8.21.custom.min.js');   
+$css-&gt;add_js('/js/ui-demo.js'); 
+$css-&gt;add_style('style.php');
+$css-&gt;load_body(dirname(__FILE__).'/jquery-ui/demo.html');
+echo $css;
+</code></pre>
+      </section>
+    </div>
+
+    
+  </body>
+</html>
